@@ -3,7 +3,7 @@ import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 
-def get_pdf_bitstreams(item, retries=3):
+def get_bundle(item, retries=3):
     item_id = item["id"]
 
     bundles_url = (
@@ -29,7 +29,11 @@ def get_pdf_bitstreams(item, retries=3):
         if bundle["name"] == "ORIGINAL"
     )
 
-    bundle_id = original_bundle["uuid"]
+    original_bundle["uuid"]
+    return original_bundle["uuid"]
+
+def get_pdf(item, retries=3):
+    bundle_id = get_bundle(item)
 
     bitstreams_url = (
         f"https://repository.gatech.edu/server/api/core/"
@@ -59,10 +63,11 @@ with open("temp.json", "r") as f:
     items = json.load(f)
 
 all_pdf_bitstreams = []
+failed_items = []
 
 with ThreadPoolExecutor(max_workers=5) as executor:
     futures = {
-        executor.submit(get_pdf_bitstreams, item): item
+        executor.submit(get_pdf, item): item
         for item in items
     }
 
@@ -78,21 +83,17 @@ with ThreadPoolExecutor(max_workers=5) as executor:
 
         except Exception as e:
             item = futures[future]
+            failed_items.append(item)
             print(f"\nFAILED {completed}/{total}")
             print(f"Item ID: {item['id']}")
             print(f"Error: {type(e).__name__}: {e}")
 
         print(f"Progress: {completed}/{total} ({completed / total * 100:.1f}%)")
 
-total_bytes = sum(
-    bitstream["sizeBytes"]
-    for bitstream in all_pdf_bitstreams
-)
 
-total_gb = total_bytes / 10**9
-total_gib = total_bytes / 1024**3
-
-print(total_bytes)
-print(f"{total_gb:.2f} GB")
-print(f"{total_gib:.2f} GiB")
-
+for item in failed_items:
+    try:
+        pdf_bitstreams = get_pdf(item)
+        all_pdf_bitstreams.extend(pdf_bitstreams)
+    except Exception as e:
+        print(f"Retry failed for {item['id']}: {e}")

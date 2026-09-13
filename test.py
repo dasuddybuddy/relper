@@ -28,14 +28,3 @@ bitstreams_url = (
 
 bitstreams = requests.get(bitstreams_url).json()["_embedded"]["bitstreams"]
 print(bitstreams)
-'''
-# Find first PDF
-pdf = next(
-    bitstream for bitstream in bitstreams
-    if bitstream.get("mimeType") == "application/pdf"
-)
-
-print(f"File: {pdf['name']}")
-print(f"Size: {pdf['sizeBytes']} bytes")
-print(f"Size: {pdf['sizeBytes'] / 10**6:.2f} MB")
-'''
