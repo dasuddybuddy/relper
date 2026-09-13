@@ -1,0 +1,41 @@
+import requests
+import json
+
+with open("temp.json", "r") as f:
+    items = json.load(f)
+
+item = items[2]
+
+# Get bundles
+bundles_url = (
+    f"https://repository.gatech.edu/server/api/core/"
+    f"items/{item['id']}/bundles"
+)
+
+bundles = requests.get(bundles_url).json()["_embedded"]["bundles"]
+
+# Find ORIGINAL bundle
+original_bundle = next(
+    bundle for bundle in bundles
+    if bundle["name"] == "ORIGINAL"
+)
+
+# Get bitstreams in ORIGINAL
+bitstreams_url = (
+    f"https://repository.gatech.edu/server/api/core/"
+    f"bundles/{original_bundle['uuid']}/bitstreams"
+)
+
+bitstreams = requests.get(bitstreams_url).json()["_embedded"]["bitstreams"]
+print(bitstreams)
+'''
+# Find first PDF
+pdf = next(
+    bitstream for bitstream in bitstreams
+    if bitstream.get("mimeType") == "application/pdf"
+)
+
+print(f"File: {pdf['name']}")
+print(f"Size: {pdf['sizeBytes']} bytes")
+print(f"Size: {pdf['sizeBytes'] / 10**6:.2f} MB")
+'''
