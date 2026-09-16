@@ -54,7 +54,12 @@ def get_pdf(item, retries=3):
     bitstreams = response.json()["_embedded"]["bitstreams"]
 
     return [
-        bitstream
+        {
+            "item_id": item["id"],
+            "item_handle": item.get("handle"),
+            "bitstream_id": bitstream["id"],
+            "content_url": bitstream["_links"]["content"]["href"],
+        }
         for bitstream in bitstreams
         if bitstream.get("name").lower().endswith("pdf")
     ]
