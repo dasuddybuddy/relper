@@ -59,41 +59,52 @@ def get_pdf(item, retries=3):
         if bitstream.get("name").lower().endswith("pdf")
     ]
 
-with open("temp.json", "r") as f:
-    items = json.load(f)
 
-all_pdf_bitstreams = []
-failed_items = []
+if __name__ == "__main__":
+    print("start")
+    with open("writes/temp.json", "r") as f:
+        items = json.load(f)
 
-with ThreadPoolExecutor(max_workers=5) as executor:
-    futures = {
-        executor.submit(get_pdf, item): item
-        for item in items
-    }
+    all_pdf_bitstreams = []
+    failed_items = []
 
-    completed = 0
-    total = len(futures)
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = {
+            executor.submit(get_pdf, item): item
+            for item in items
+        }
 
-    for future in as_completed(futures):
-        completed += 1
+        completed = 0
+        total = len(futures)
 
+        for future in as_completed(futures):
+            completed += 1
+
+            try:
+                pdf_bitstreams = future.result()
+                all_pdf_bitstreams.extend(pdf_bitstreams)
+
+            except Exception as e:
+                item = futures[future]
+                failed_items.append(item)
+                print(f"\nFAILED {completed}/{total}")
+                print(f"Item ID: {item['id']}")
+                print(f"Error: {type(e).__name__}: {e}")
+
+            print(f"Progress: {completed}/{total} ({completed / total * 100:.1f}%)")
+
+    for item in failed_items:
         try:
-            pdf_bitstreams = future.result()
+            pdf_bitstreams = get_pdf(item)
             all_pdf_bitstreams.extend(pdf_bitstreams)
-
         except Exception as e:
-            item = futures[future]
-            failed_items.append(item)
-            print(f"\nFAILED {completed}/{total}")
-            print(f"Item ID: {item['id']}")
-            print(f"Error: {type(e).__name__}: {e}")
+            print(f"Retry failed for {item['id']}: {e}")
 
-        print(f"Progress: {completed}/{total} ({completed / total * 100:.1f}%)")
+    with open("writes/miss.json", "w", encoding="utf-8") as file:
+        json.dump(failed_items, file, indent=2)
+
+    with open("writes/pdf_bitstreams.json", "w", encoding="utf-8") as file:
+        json.dump(all_pdf_bitstreams, file, indent=2)
 
 
-for item in failed_items:
-    try:
-        pdf_bitstreams = get_pdf(item)
-        all_pdf_bitstreams.extend(pdf_bitstreams)
-    except Exception as e:
-        print(f"Retry failed for {item['id']}: {e}")
+

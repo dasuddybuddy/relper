@@ -1,0 +1,1136 @@
+[
+  {
+    "id": "2e2924df-74e0-4b37-a6fc-6cb9febc515e",
+    "uuid": "2e2924df-74e0-4b37-a6fc-6cb9febc515e",
+    "name": "Feature Reduction via Generalized Uncorrelated Linear Discriminant Analysis",
+    "handle": "1853/14447",
+    "metadata": {
+      "dc.contributor.author": [
+        {
+          "value": "Ye, Jieping",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "Janardan, Ravi",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 1
+        },
+        {
+          "value": "Li, Qi",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 2
+        },
+        {
+          "value": "Park, Haesun",
+          "language": null,
+          "authority": "virtual::173429",
+          "confidence": -1,
+          "place": 3
+        }
+      ],
+      "dc.date.accessioned": [
+        {
+          "value": "2007-05-24T16:44:09Z",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.date.available": [
+        {
+          "value": "2007-05-24T16:44:09Z",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.date.issued": [
+        {
+          "value": "2006",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.description.abstract": [
+        {
+          "value": "High-dimensional data appear in many applications of data mining, machine learning, and bioinformatics.\r\nFeature reduction is commonly applied as a preprocessing step to overcome the curse\r\nof dimensionality. Uncorrelated Linear Discriminant Analysis (ULDA) was recently proposed for\r\nfeature reduction. The extracted features via ULDA were shown to be statistically uncorrelated,\r\nwhich is desirable for many applications. In this paper, an algorithm called ULDA/QR is proposed to simplify the previous implementation\r\nof ULDA. Then the ULDA/GSVD algorithm is proposed based on a novel optimization criterion, to\r\naddress the singularity problem which occurs in undersampled problems, where the data dimension\r\nis larger than the data size. The criterion used is the regularized version of the one in ULDA/QR.\r\nSurprisingly, our theoretical result shows that the solution to ULDA/GSVD is independent of\r\nthe value of the regularization parameter. Experimental results on various types of datasets are reported to show the effectiveness of the proposed algorithm and to compare it with other commonly\r\nused feature reduction algorithms.",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.identifier.uri": [
+        {
+          "value": "http://hdl.handle.net/1853/14447",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.language.iso": [
+        {
+          "value": "en_US",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.publisher": [
+        {
+          "value": "Georgia Institute of Technology",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.relation.ispartofseries": [
+        {
+          "value": "CSE Technical Reports; GT-CSE-06-18",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.subject": [
+        {
+          "value": "Feature reduction",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "Generalized Singular Value Decomposition (GSVD)",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 1
+        },
+        {
+          "value": "QR decomposition",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 2
+        },
+        {
+          "value": "Uncorrelated Linear Discriminant Analysis",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 3
+        }
+      ],
+      "dc.title": [
+        {
+          "value": "Feature Reduction via Generalized Uncorrelated Linear Discriminant Analysis",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.type": [
+        {
+          "value": "Text",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.type.genre": [
+        {
+          "value": "Technical Report",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dspace.entity.type": [
+        {
+          "value": "Publication",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "local.contributor.corporatename": [
+        {
+          "value": "College of Computing",
+          "language": null,
+          "authority": "virtual::14888",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "School of Computational Science and Engineering",
+          "language": null,
+          "authority": "virtual::17442",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "local.relation.ispartofseries": [
+        {
+          "value": "College of Computing Technical Report Series",
+          "language": null,
+          "authority": "virtual::14382",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "School of Computational Science and Engineering Technical Report Series",
+          "language": null,
+          "authority": "virtual::17405",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isAuthorOfPublication": [
+        {
+          "value": "92013a6f-96b2-4ca8-9ef7-08f408ec8485",
+          "language": null,
+          "authority": "virtual::173429",
+          "confidence": -1,
+          "place": 3
+        }
+      ],
+      "relation.isAuthorOfPublication.latestForDiscovery": [
+        {
+          "value": "92013a6f-96b2-4ca8-9ef7-08f408ec8485",
+          "language": null,
+          "authority": "virtual::173429",
+          "confidence": -1,
+          "place": -1
+        }
+      ],
+      "relation.isOrgUnitOfPublication": [
+        {
+          "value": "c8892b3c-8db6-4b7b-a33a-1b67f7db2021",
+          "language": null,
+          "authority": "virtual::14888",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "01ab2ef1-c6da-49c9-be98-fbd1d840d2b1",
+          "language": null,
+          "authority": "virtual::17442",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isOrgUnitOfPublication.latestForDiscovery": [
+        {
+          "value": "c8892b3c-8db6-4b7b-a33a-1b67f7db2021",
+          "language": null,
+          "authority": "virtual::14888",
+          "confidence": -1,
+          "place": -1
+        }
+      ],
+      "relation.isSeriesOfPublication": [
+        {
+          "value": "35c9e8fc-dd67-4201-b1d5-016381ef65b8",
+          "language": null,
+          "authority": "virtual::14382",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "5a01f926-96af-453d-a75b-abc3e0f0abb3",
+          "language": null,
+          "authority": "virtual::17405",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isSeriesOfPublication.latestForDiscovery": [
+        {
+          "value": "35c9e8fc-dd67-4201-b1d5-016381ef65b8",
+          "language": null,
+          "authority": "virtual::14382",
+          "confidence": -1,
+          "place": -1
+        }
+      ]
+    },
+    "inArchive": true,
+    "discoverable": true,
+    "withdrawn": false,
+    "lastModified": "2025-05-09T15:28:13.980+00:00",
+    "entityType": "Publication",
+    "type": "item",
+    "_links": {
+      "accessStatus": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/accessStatus"
+      },
+      "bundles": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/bundles"
+      },
+      "identifiers": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/identifiers"
+      },
+      "mappedCollections": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/mappedCollections"
+      },
+      "owningCollection": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/owningCollection"
+      },
+      "relationships": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/relationships"
+      },
+      "version": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/version"
+      },
+      "templateItemOf": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/templateItemOf"
+      },
+      "thumbnail": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e/thumbnail"
+      },
+      "self": {
+        "href": "https://repository.gatech.edu/server/api/core/items/2e2924df-74e0-4b37-a6fc-6cb9febc515e"
+      }
+    },
+    "_embedded": {
+      "thumbnail": {
+        "id": "7d9d72db-3b73-4dc4-9636-b169efdfa454",
+        "uuid": "7d9d72db-3b73-4dc4-9636-b169efdfa454",
+        "name": "GT-CSE-06-18.pdf.jpg",
+        "handle": null,
+        "metadata": {
+          "dc.description": [
+            {
+              "value": "IM Thumbnail",
+              "language": null,
+              "authority": null,
+              "confidence": -1,
+              "place": 0
+            }
+          ],
+          "dc.source": [
+            {
+              "value": "Written by FormatFilter org.dspace.app.mediafilter.ImageMagickPdfThumbnailFilter on 2016-08-09T18:06:59Z (GMT).",
+              "language": null,
+              "authority": null,
+              "confidence": -1,
+              "place": 0
+            }
+          ],
+          "dc.title": [
+            {
+              "value": "GT-CSE-06-18.pdf.jpg",
+              "language": null,
+              "authority": null,
+              "confidence": -1,
+              "place": 0
+            }
+          ]
+        },
+        "bundleName": "THUMBNAIL",
+        "sizeBytes": 8170,
+        "checkSum": {
+          "checkSumAlgorithm": "MD5",
+          "value": "2b0995f608837a96d8e59954bba0b1b7"
+        },
+        "sequenceId": 4,
+        "type": "bitstream",
+        "_links": {
+          "content": {
+            "href": "https://repository.gatech.edu/server/api/core/bitstreams/7d9d72db-3b73-4dc4-9636-b169efdfa454/content"
+          },
+          "bundle": {
+            "href": "https://repository.gatech.edu/server/api/core/bitstreams/7d9d72db-3b73-4dc4-9636-b169efdfa454/bundle"
+          },
+          "format": {
+            "href": "https://repository.gatech.edu/server/api/core/bitstreams/7d9d72db-3b73-4dc4-9636-b169efdfa454/format"
+          },
+          "thumbnail": {
+            "href": "https://repository.gatech.edu/server/api/core/bitstreams/7d9d72db-3b73-4dc4-9636-b169efdfa454/thumbnail"
+          },
+          "self": {
+            "href": "https://repository.gatech.edu/server/api/core/bitstreams/7d9d72db-3b73-4dc4-9636-b169efdfa454"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "30bb943b-a4ad-409f-9711-54011f167d19",
+    "uuid": "30bb943b-a4ad-409f-9711-54011f167d19",
+    "name": "A Multifrontal QR Factorization Approach to Distributed Inference Applied to Multi-Robot Localization -and Mapping",
+    "handle": "1853/38543",
+    "metadata": {
+      "dc.contributor.author": [
+        {
+          "value": "Dellaert, Frank",
+          "language": null,
+          "authority": "virtual::180765",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "Krauthausen, Peter",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "dc.contributor.corporatename": [
+        {
+          "value": "Georgia Institute of Technology. Center for Robotics and Intelligent Machines",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "Georgia Institute of Technology. College of Computing",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "dc.date.accessioned": [
+        {
+          "value": "2011-04-15T15:00:37Z",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.date.available": [
+        {
+          "value": "2011-04-15T15:00:37Z",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.date.issued": [
+        {
+          "value": "2005",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.description.abstract": [
+        {
+          "value": "QR factorization is most often used as a  black box  algorithm, but is in fact an elegant computation on a factor graph. By computing a rooted clique tree on this graph, the computation can be parallelized across subtrees, which forms the basis of so-called multifrontal QR methods. By judiciously choosing the order in which variables are eliminated in the clique tree computation, we show that one straightforwardly obtains a method for performing inference in distributed sensor networks. One obvious application is distributed localization and mapping with a team of robots. We phrase the problem as inference on a large-scale Gaussian Markov Random Field induced by the measurement factor graph, and show how multifrontal QR on this graph solves for the global map and all the robot poses in a distributed fashion. The method is illustrated using both small and large-scale simulations, and validated in practice through actual robot experiments.",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.identifier.citation": [
+        {
+          "value": "Dellaert, F. and Krauthausen, P. (2005). \"A Multifrontal QR Factorization Approach to Distributed Inference Applied to Multi-Robot Localization -and Mapping\".  Proceedings of the National Conference on Artificial Intelligence (AAAI 2005), pp. 1261\u20131266.",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.identifier.uri": [
+        {
+          "value": "http://hdl.handle.net/1853/38543",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.language.iso": [
+        {
+          "value": "en_US",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.publisher": [
+        {
+          "value": "Georgia Institute of Technology",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.publisher.original": [
+        {
+          "value": "American Association for Artificial Intelligence",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.title": [
+        {
+          "value": "A Multifrontal QR Factorization Approach to Distributed Inference Applied to Multi-Robot Localization -and Mapping",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.type": [
+        {
+          "value": "Text",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.type.genre": [
+        {
+          "value": "Proceedings",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dspace.entity.type": [
+        {
+          "value": "Publication",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "local.contributor.corporatename": [
+        {
+          "value": "Institute for Robotics and Intelligent Machines (IRIM)",
+          "language": null,
+          "authority": "virtual::16532",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "College of Computing",
+          "language": null,
+          "authority": "virtual::16745",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isAuthorOfPublication": [
+        {
+          "value": "dac80074-d9d8-4358-b6eb-397d95bdc868",
+          "language": null,
+          "authority": "virtual::180765",
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "relation.isAuthorOfPublication.latestForDiscovery": [
+        {
+          "value": "dac80074-d9d8-4358-b6eb-397d95bdc868",
+          "language": null,
+          "authority": "virtual::180765",
+          "confidence": -1,
+          "place": -1
+        }
+      ],
+      "relation.isOrgUnitOfPublication": [
+        {
+          "value": "66259949-abfd-45c2-9dcc-5a6f2c013bcf",
+          "language": null,
+          "authority": "virtual::16532",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "c8892b3c-8db6-4b7b-a33a-1b67f7db2021",
+          "language": null,
+          "authority": "virtual::16745",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isOrgUnitOfPublication.latestForDiscovery": [
+        {
+          "value": "66259949-abfd-45c2-9dcc-5a6f2c013bcf",
+          "language": null,
+          "authority": "virtual::16532",
+          "confidence": -1,
+          "place": -1
+        }
+      ]
+    },
+    "inArchive": true,
+    "discoverable": true,
+    "withdrawn": false,
+    "lastModified": "2025-05-09T16:14:55.401+00:00",
+    "entityType": "Publication",
+    "type": "item",
+    "_links": {
+      "accessStatus": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/accessStatus"
+      },
+      "bundles": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/bundles"
+      },
+      "identifiers": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/identifiers"
+      },
+      "mappedCollections": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/mappedCollections"
+      },
+      "owningCollection": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/owningCollection"
+      },
+      "relationships": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/relationships"
+      },
+      "version": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/version"
+      },
+      "templateItemOf": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/templateItemOf"
+      },
+      "thumbnail": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19/thumbnail"
+      },
+      "self": {
+        "href": "https://repository.gatech.edu/server/api/core/items/30bb943b-a4ad-409f-9711-54011f167d19"
+      }
+    },
+    "_embedded": {
+      "thumbnail": null
+    }
+  },
+  {
+    "id": "06f81bf4-ed81-402e-a02b-6a7c9978bfc5",
+    "uuid": "06f81bf4-ed81-402e-a02b-6a7c9978bfc5",
+    "name": "On-line Learning of the Traversability of Unstructured Terrain for Outdoor Robot Navigation",
+    "handle": "1853/38540",
+    "metadata": {
+      "dc.contributor.author": [
+        {
+          "value": "Dellaert, Frank",
+          "language": null,
+          "authority": "virtual::180732",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "Oh, Sang Min",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 1
+        },
+        {
+          "value": "Rehg, James M.",
+          "language": null,
+          "authority": "virtual::175594",
+          "confidence": -1,
+          "place": 2
+        }
+      ],
+      "dc.contributor.corporatename": [
+        {
+          "value": "Georgia Institute of Technology. Center for Robotics and Intelligent Machines",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "Georgia Institute of Technology. College of Computing",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "dc.date.accessioned": [
+        {
+          "value": "2011-04-15T14:31:54Z",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.date.available": [
+        {
+          "value": "2011-04-15T14:31:54Z",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.date.issued": [
+        {
+          "value": "2006",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.identifier.citation": [
+        {
+          "value": "Oh, S., Rehg, J. and Dellaert, F. (2006). On-line Learning of the Traversability of Unstructured Terrain for Outdoor Robot Navigation. Snobird Learning Workshop, 2006.",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.identifier.uri": [
+        {
+          "value": "http://hdl.handle.net/1853/38540",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.language.iso": [
+        {
+          "value": "en_US",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.publisher": [
+        {
+          "value": "Georgia Institute of Technology",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.title": [
+        {
+          "value": "On-line Learning of the Traversability of Unstructured Terrain for Outdoor Robot Navigation",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.type": [
+        {
+          "value": "Text",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.type.genre": [
+        {
+          "value": "Presentation",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dspace.entity.type": [
+        {
+          "value": "Publication",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "local.contributor.corporatename": [
+        {
+          "value": "Institute for Robotics and Intelligent Machines (IRIM)",
+          "language": null,
+          "authority": "virtual::16498",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "College of Computing",
+          "language": null,
+          "authority": "virtual::16711",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isAuthorOfPublication": [
+        {
+          "value": "dac80074-d9d8-4358-b6eb-397d95bdc868",
+          "language": null,
+          "authority": "virtual::180732",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "af5b46ec-ffe2-4ce4-8722-1373c9b74a37",
+          "language": null,
+          "authority": "virtual::175594",
+          "confidence": -1,
+          "place": 2
+        }
+      ],
+      "relation.isAuthorOfPublication.latestForDiscovery": [
+        {
+          "value": "af5b46ec-ffe2-4ce4-8722-1373c9b74a37",
+          "language": null,
+          "authority": "virtual::175594",
+          "confidence": -1,
+          "place": -1
+        }
+      ],
+      "relation.isOrgUnitOfPublication": [
+        {
+          "value": "66259949-abfd-45c2-9dcc-5a6f2c013bcf",
+          "language": null,
+          "authority": "virtual::16498",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "c8892b3c-8db6-4b7b-a33a-1b67f7db2021",
+          "language": null,
+          "authority": "virtual::16711",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isOrgUnitOfPublication.latestForDiscovery": [
+        {
+          "value": "66259949-abfd-45c2-9dcc-5a6f2c013bcf",
+          "language": null,
+          "authority": "virtual::16498",
+          "confidence": -1,
+          "place": -1
+        }
+      ]
+    },
+    "inArchive": true,
+    "discoverable": true,
+    "withdrawn": false,
+    "lastModified": "2025-05-09T15:59:13.623+00:00",
+    "entityType": "Publication",
+    "type": "item",
+    "_links": {
+      "accessStatus": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/accessStatus"
+      },
+      "bundles": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/bundles"
+      },
+      "identifiers": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/identifiers"
+      },
+      "mappedCollections": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/mappedCollections"
+      },
+      "owningCollection": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/owningCollection"
+      },
+      "relationships": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/relationships"
+      },
+      "version": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/version"
+      },
+      "templateItemOf": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/templateItemOf"
+      },
+      "thumbnail": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5/thumbnail"
+      },
+      "self": {
+        "href": "https://repository.gatech.edu/server/api/core/items/06f81bf4-ed81-402e-a02b-6a7c9978bfc5"
+      }
+    },
+    "_embedded": {
+      "thumbnail": null
+    }
+  },
+  {
+    "id": "0f8d9cf3-250e-450b-8564-aba7b43e5ef7",
+    "uuid": "0f8d9cf3-250e-450b-8564-aba7b43e5ef7",
+    "name": "Rao-Blackwellized Importance Sampling of Camera Parameters from Simple User Input with Visibility Preprocessing in Line Space",
+    "handle": "1853/38542",
+    "metadata": {
+      "dc.contributor.author": [
+        {
+          "value": "Quennesson, Kevin",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "Dellaert, Frank",
+          "language": null,
+          "authority": "virtual::180739",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "dc.contributor.corporatename": [
+        {
+          "value": "Georgia Institute of Technology. Center for Robotics and Intelligent Machines",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "Georgia Institute of Technology. College of Computing",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "dc.date.accessioned": [
+        {
+          "value": "2011-04-15T14:51:46Z",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.date.available": [
+        {
+          "value": "2011-04-15T14:51:46Z",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.date.issued": [
+        {
+          "value": "2006-06",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.description.abstract": [
+        {
+          "value": "Users know what they see before where they are: it is more natural to talk about high level visibility information (\"I see such object\") than about one's location or orientation. In this paper we introduce a method to find in 3D worlds a density of viewpoints of camera locations from high level visibility constraints on objects in this world. Our method is based on Rao-Blackwellized importance sampling. For efficiency purposes, the proposal distribution used for sampling is extracted from a visibility preprocessing technique adapted from computer graphics. We apply the method for finding in a 3D city model of Atlanta the virtual locations of real-world cameras and viewpoints.",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.identifier.citation": [
+        {
+          "value": "Quennesson, K. and Dellaert, F. (2006). Rao-Blackwellized Importance Sampling of Camera Parameters from Simple User Input with Visibility Preprocessing in Line Space. Third International Symposium 3D Data Processing, Visualization, and Transmission, June 2006.",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.identifier.uri": [
+        {
+          "value": "http://hdl.handle.net/1853/38542",
+          "language": "",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.language.iso": [
+        {
+          "value": "en_US",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.publisher": [
+        {
+          "value": "Georgia Institute of Technology",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.title": [
+        {
+          "value": "Rao-Blackwellized Importance Sampling of Camera Parameters from Simple User Input with Visibility Preprocessing in Line Space",
+          "language": "en_US",
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.type": [
+        {
+          "value": "Text",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dc.type.genre": [
+        {
+          "value": "Poster",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "dspace.entity.type": [
+        {
+          "value": "Publication",
+          "language": null,
+          "authority": null,
+          "confidence": -1,
+          "place": 0
+        }
+      ],
+      "local.contributor.corporatename": [
+        {
+          "value": "Institute for Robotics and Intelligent Machines (IRIM)",
+          "language": null,
+          "authority": "virtual::16503",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "College of Computing",
+          "language": null,
+          "authority": "virtual::16716",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isAuthorOfPublication": [
+        {
+          "value": "dac80074-d9d8-4358-b6eb-397d95bdc868",
+          "language": null,
+          "authority": "virtual::180739",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isAuthorOfPublication.latestForDiscovery": [
+        {
+          "value": "dac80074-d9d8-4358-b6eb-397d95bdc868",
+          "language": null,
+          "authority": "virtual::180739",
+          "confidence": -1,
+          "place": -1
+        }
+      ],
+      "relation.isOrgUnitOfPublication": [
+        {
+          "value": "66259949-abfd-45c2-9dcc-5a6f2c013bcf",
+          "language": null,
+          "authority": "virtual::16503",
+          "confidence": -1,
+          "place": 0
+        },
+        {
+          "value": "c8892b3c-8db6-4b7b-a33a-1b67f7db2021",
+          "language": null,
+          "authority": "virtual::16716",
+          "confidence": -1,
+          "place": 1
+        }
+      ],
+      "relation.isOrgUnitOfPublication.latestForDiscovery": [
+        {
+          "value": "66259949-abfd-45c2-9dcc-5a6f2c013bcf",
+          "language": null,
+          "authority": "virtual::16503",
+          "confidence": -1,
+          "place": -1
+        }
+      ]
+    },
+    "inArchive": true,
+    "discoverable": true,
+    "withdrawn": false,
+    "lastModified": "2025-05-09T14:17:30.064+00:00",
+    "entityType": "Publication",
+    "type": "item",
+    "_links": {
+      "accessStatus": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/accessStatus"
+      },
+      "bundles": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/bundles"
+      },
+      "identifiers": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/identifiers"
+      },
+      "mappedCollections": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/mappedCollections"
+      },
+      "owningCollection": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/owningCollection"
+      },
+      "relationships": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/relationships"
+      },
+      "version": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/version"
+      },
+      "templateItemOf": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/templateItemOf"
+      },
+      "thumbnail": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7/thumbnail"
+      },
+      "self": {
+        "href": "https://repository.gatech.edu/server/api/core/items/0f8d9cf3-250e-450b-8564-aba7b43e5ef7"
+      }
+    },
+    "_embedded": {
+      "thumbnail": null
+    }
+  }
+]

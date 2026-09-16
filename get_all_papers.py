@@ -20,6 +20,6 @@ def get_all_papers():
             data = future.result()[1]
             all_items.extend(data["_embedded"]["items"])
 
-    with open('temp.json', "w") as file:
+    with open('writes/temp.json', "w") as file:
         json.dump(all_items, file, indent=2)
     print(f"Total items: {len(all_items)}")

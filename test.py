@@ -4,7 +4,10 @@ import json
 with open("temp.json", "r") as f:
     items = json.load(f)
 
-item = items[2]
+print(len(items))
+
+item = items[0]
+print(item['id'])
 
 # Get bundles
 bundles_url = (
@@ -12,7 +15,11 @@ bundles_url = (
     f"items/{item['id']}/bundles"
 )
 
+bundles = requests.get(bundles_url).json()
+print(bundles)
+
 bundles = requests.get(bundles_url).json()["_embedded"]["bundles"]
+
 
 # Find ORIGINAL bundle
 original_bundle = next(
