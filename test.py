@@ -1,7 +1,7 @@
 import requests
 import json
 
-with open("temp.json", "r") as f:
+with open("writes/temp.json", "r") as f:
     items = json.load(f)
 
 print(len(items))

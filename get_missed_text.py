@@ -1,10 +1,9 @@
-import bitstream_lookup as bl
+import json
+import requests
 
-pdfs = []
-with open('writes/miss.json', 'r') as file:
-    for line in file:
-        item = {"id": line.strip()}
-        pdfs.append(bl.get_pdf(item))
 
-print(pdfs)
+with open("writes/miss.json", "r") as file:
+    items = json.load(file)
 
+for item in items:
+    print(item['name'] + "\n")
