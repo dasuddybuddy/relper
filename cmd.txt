@@ -1,0 +1,2 @@
+kubectl cp <pod-name>:/app/temp_pdfs ./temp_pdfs
+postgresql://postgres:password@host.minikube.internal:5432/relper

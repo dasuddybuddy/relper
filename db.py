@@ -44,7 +44,7 @@ execute_values(
     """INSERT INTO pdf_downloader.papers (item_id, item_handle, bitstream_id, content_url)
        VALUES %s
        ON CONFLICT (bitstream_id) DO NOTHING""",
-    [(p["item_id"], p["item_handle"], p["bitstream_id"], p["content_url"]) for p in items]
+    [(p["item_id"], p["item_handle"], p["bitstream_id"], p["content_url"]) for p in papers]
 )
 
 conn.commit()

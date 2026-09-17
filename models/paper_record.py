@@ -18,10 +18,10 @@ class PaperRecord:
     error : Optional[str]
     updated_at : datetime
 
-@classmethod
-def from_row(cls, row: dict) -> "PaperRecord":
-    return cls(**row)
+    @classmethod
+    def from_row(cls, row: dict) -> "PaperRecord":
+        return cls(**row)
 
-@property
-def can_retry(self) -> bool:
-    return self.attempts < self.max_attempts
+    @property
+    def can_retry(self) -> bool:
+        return self.attempts < self.max_attempts
