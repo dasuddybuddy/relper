@@ -45,3 +45,5 @@ conn.commit()
 print(f"Seeded {len(papers)} papers")
 cur.close()
 conn.close()
+
+
