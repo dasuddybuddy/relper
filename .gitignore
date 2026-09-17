@@ -1,3 +1,4 @@
+# PDFs
 *.pdf
 
 # Python Virtual Environments
@@ -8,3 +9,6 @@ __pycache__/
 
 # Environment variables
 .env
+
+# Test
+test.py
