@@ -105,10 +105,15 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Retry failed for {item['id']}: {e}")
 
+    print(f"Items without PDFs: {len(items_without_pdfs)}")
+
+    for item in items_without_pdfs:
+        print(item["id"], item.get("handle"))
+
     with open("writes/miss.json", "w", encoding="utf-8") as file:
         json.dump(failed_items, file, indent=2)
 
-    with open("writes/pdf_bitstreams.json", "w", encoding="utf-8") as file:
+    with open("writes/pdf_bitstreams2.json", "w", encoding="utf-8") as file:
         json.dump(all_pdf_bitstreams, file, indent=2)
 
     print(len(all_pdf_bitstreams))
