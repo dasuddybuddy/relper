@@ -1,10 +1,14 @@
 import os
 import json
 import psycopg2
+from psycopg2.extras import execute_values
+from dotenv import load_dotenv
 
 with open("writes/pdf_bitstreams.json", "r") as f:
-    items = json.load(f)
+    papers = json.load(f)
+print(len(papers))
 
+load_dotenv()
 DATABASE_URL = os.environ["DATABASE_URL"]
 
 conn = psycopg2.connect(DATABASE_URL)
@@ -12,6 +16,8 @@ conn = psycopg2.connect(DATABASE_URL)
 cur = conn.cursor()
 
 cur.execute("""
+CREATE SCHEMA IF NOT EXISTS pdf_downloader;
+
 CREATE TABLE IF NOT EXISTS pdf_downloader.papers (
     id SERIAL PRIMARY KEY,
     item_id UUID NOT NULL,
@@ -33,13 +39,13 @@ CREATE INDEX IF NOT EXISTS idx_papers_claimed_at ON pdf_downloader.papers(claime
     WHERE status = 'in_progress';
 """)
 
-for p in papers:
-    cur.execute(
-        """INSERT INTO pdf_downloader.papers (item_id, item_handle, bitstream_id, content_url)
-           VALUES (%s, %s, %s, %s)
-           ON CONFLICT (bitstream_id) DO NOTHING""",
-        (p["item_id"], p["item_handle"], p["bitstream_id"], p["content_url"])
-    )
+execute_values(
+    cur,
+    """INSERT INTO pdf_downloader.papers (item_id, item_handle, bitstream_id, content_url)
+       VALUES %s
+       ON CONFLICT (bitstream_id) DO NOTHING""",
+    [(p["item_id"], p["item_handle"], p["bitstream_id"], p["content_url"]) for p in items]
+)
 
 conn.commit()
 print(f"Seeded {len(papers)} papers")

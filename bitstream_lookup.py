@@ -111,5 +111,7 @@ if __name__ == "__main__":
     with open("writes/pdf_bitstreams.json", "w", encoding="utf-8") as file:
         json.dump(all_pdf_bitstreams, file, indent=2)
 
+    print(len(all_pdf_bitstreams))
+
 
 
