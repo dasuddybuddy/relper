@@ -16,6 +16,11 @@ spec:
         - name: download-pdf
           image: download-pdf:latest
           imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 5000
-
+          volumeMounts:
+            - name: pdf-storage
+              mountPath: /mnt/downloaded_pdfs
+      volumes:
+        - name: pdf-storage
+          hostPath:
+            path: /mnt/downloaded_pdfs
+            type: Directory

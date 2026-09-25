@@ -9,7 +9,7 @@ with open("writes/pdf_bitstreams.json", "r") as f:
 print(len(papers))
 
 load_dotenv()
-DATABASE_URL = os.environ["DATABASE_URL"]
+DATABASE_URL = os.environ["DATABASE_URL1"]
 
 conn = psycopg2.connect(DATABASE_URL)
 

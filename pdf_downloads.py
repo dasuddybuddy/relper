@@ -66,9 +66,9 @@ def worker_loop(conn, worker_id: str):
     if paper is None:
         return False  # nothing left
 
-    os.makedirs("temp_pdfs", exist_ok=True)
+    os.makedirs("/mnt/downloaded_pdfs", exist_ok=True)
     try:
-        download_pdf(paper.content_url, f"temp_pdfs/{paper.item_id}.pdf")
+        download_pdf(paper.content_url, f"/mnt/downloaded_pdfs/{paper.item_id}.pdf")
         mark_done(conn, paper.id)
     except Exception as e:
         mark_failed(conn, paper.id, error=str(e))
@@ -78,9 +78,6 @@ if __name__ == "__main__":
     print("start")
     load_dotenv()
     DATABASE_URL = os.environ["DATABASE_URL"]
-    os.makedirs("temp_pdfs", exist_ok=True)
-
-    start = time.perf_counter()
     
     def run_one():
         # psycopg2 connections aren't thread-safe — each thread needs its own
@@ -97,7 +94,3 @@ if __name__ == "__main__":
         futures = [executor.submit(run_one) for _ in range(10)]
         for f in as_completed(futures):
             f.result()
-    elapsed = time.perf_counter() - start
-
-    print(f"Finished in {elapsed:.2f} seconds")
-    print(f"Finished in {elapsed / 60:.2f} minutes")

@@ -1,5 +1,7 @@
 # PDFs
 *.pdf
+downloaded_pdfs/
+test/
 
 # Python Virtual Environments
 venv/
@@ -12,3 +14,10 @@ __pycache__/
 
 # Test
 test.py
+
+# XML
+*.xml
+
+# txt
+*.txt
+
