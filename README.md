@@ -1,8 +1,6 @@
 # RELPER
 
-A research-intelligence pipeline over the [Georgia Tech SMARTECH](https://repository.gatech.edu/) repository. RELPER harvests every open-access paper in the College of Computing, turns each PDF into structured full text with [GROBID](https://github.com/kermitt2/grobid), and reconciles the extraction against the repository's own catalog records to produce a clean, queryable corpus — the substrate a GraphRAG layer will sit on.
-
-**Status:** corpus pipeline is production-shaped and running. The retrieval/graph layer is not built yet.
+A research-intelligence pipeline over the [Georgia Tech SMARTECH](https://repository.gatech.edu/) repository. RELPER harvests every open-access paper in the College of Computing, turns each PDF into structured full text with [GROBID](https://github.com/kermitt2/grobid), and reconciles the extraction against the repository's own catalog records to produce a clean, queryable corpus. A GraphRAG retrieval layer then reasons across that corpus rather than over single documents, so a query returns the papers *and* the relationships between them.
 
 ---
 
@@ -28,6 +26,14 @@ SMARTECH DSpace REST API
   retry_failed.py ────── re-drive GROBID failures until exhausted
         ▼
   build_corpus.py ────── TEI + catalog join → corpus.jsonl / corpus.csv
+        │  992 records, full text + bibliographic fields
+        ▼
+  build_index.py ─────── structure-aware chunking → embeddings → pgvector
+        ▼
+  build_graph.py ─────── paper/author/topic/venue graph + citation edges
+        │  Louvain communities, summarized and cached
+        ▼
+  ask.py ──────────────── routed retrieval → answer + citable papers
 ```
 
 Each stage is independently re-runnable and idempotent: re-running picks up where the last one stopped rather than restarting the crawl.
@@ -38,13 +44,15 @@ Each stage is independently re-runnable and idempotent: re-running picks up wher
 
 **A queue in Postgres, not a thread pool over a list.** `claim_paper` issues a single `UPDATE ... WHERE id = (SELECT id ... FOR UPDATE SKIP LOCKED LIMIT 1) RETURNING *`. Ten workers share one queue with no coordinator, no lock contention, and no coordination between them; adding a fourth Kubernetes replica (see `deployment.yaml`) needs zero code change. `attempts`/`max_attempts` bound retries per row, so a permanently dead bitstream is quarantined as `failed` with its error text rather than being retried forever. A `claimed_at` index supports reclaiming rows orphaned by a pod that died mid-download.
 
-**Everything is keyed by `item_id`, never `bitstream_id`.** SMARTECH items are one-to-many with PDF bitstreams — 40 items carry more than one. Naming every artifact after the item means the GROBID output joins back to catalog metadata with a single string match, and the bibliographic record is a property of the *work* rather than of whichever file happened to be downloaded. The tradeoff is that a second bitstream for the same item overwrites the first; that is a known, bounded data loss (40 items) and the fix is a `bitstreams/` subdirectory per item.
+**Everything is keyed by `item_id`, never `bitstream_id`.** SMARTECH items are one-to-many with PDF bitstreams — 40 items carry more than one. Naming every artifact after the item means the GROBID output joins back to catalog metadata with a single string match, and the bibliographic record is a property of the *work* rather than of whichever file happened to be downloaded. The same key carries through chunking, embedding, and the graph, so the whole system is joinable end to end without a single crosswalk table. The tradeoff is that a second bitstream for the same item overwrites the first; that is a known, bounded data loss (40 items) and the fix is a `bitstreams/` subdirectory per item.
 
-**Catalog metadata beats extraction for bibliographic fields.** GROBID is good at text and unreliable at cataloging. It missed `dc.subject` on the majority of records, guessed wrong issue dates, and on at least one thesis returned the *acknowledgements* as the abstract. So title, authors, date, subject, rights, and source URL are read from DSpace, and GROBID is trusted only for `<abstract>` and `<text><body>`. `build_corpus.py` records which side supplied each abstract in an `abstract_source` field, so the 86 GROBID-sourced rows (36 of them stubs under 30 characters) are auditable rather than silently trusted.
+**Catalog metadata beats extraction for bibliographic fields.** GROBID is good at text and unreliable at cataloging. It missed `dc.subject` on the majority of records, guessed wrong issue dates, and on at least one thesis returned the *acknowledgements* as the abstract. So title, authors, date, subject, rights, and source URL are read from DSpace, and GROBID is trusted only for `<abstract>` and `<text><body>`. `build_corpus.py` records which side supplied each abstract in an `abstract_source` field, so the 86 GROBID-sourced rows (36 of them stubs under 30 characters) are auditable rather than silently trusted. Author nodes in the graph inherit this decision: identity resolution against a curated name map beats fuzzy string matching on extraction output.
 
 **File system as the state machine for the extraction stage.** GROBID writes a `<stem>_<status>.txt` marker on failure and deletes it on success, so `retry_failed.py` derives the retry set by scanning for markers — the failure list shrinks by itself as retries land, and the extraction stage needs no database at all.
 
-**Extraction cleanup happens once, at the end.** TEI markup is normalized into paragraphs at corpus-build time: `<figure>` blocks dropped, `<ref>` citation anchors unwrapped, hyphenated line breaks rejoined, whitespace collapsed. Consumers get a `text` field they can embed without writing a TEI parser, and a re-run of the cleaner is cheap compared to re-running GROBID.
+**Extraction cleanup happens once, at the end.** TEI markup is normalized into paragraphs at corpus-build time: `<figure>` blocks dropped, `<ref>` citation anchors unwrapped, hyphenated line breaks rejoined, whitespace collapsed. Consumers get a `text` field they can chunk and embed without writing a TEI parser, and a re-run of the cleaner is cheap compared to re-running GROBID.
+
+**Provenance is a schema requirement, not a feature.** `item_id` is carried from the original API response all the way through to the citation attached to an answer. The alternative — a retrieval layer that emits confident prose with no path back to a source PDF — is unusable for research no matter how good the prose reads.
 
 ---
 
@@ -83,6 +91,44 @@ Author ordering relies on DSpace's `place` field, which encodes submission order
 
 ---
 
+## Graph layer
+
+The corpus is chunked, embedded, and linked into a typed entity graph, then queried through a router that picks the right retrieval strategy per question.
+
+**Chunking follows document structure, not a token window.** GROBID's TEI already carries section boundaries, so chunks split on `<head>` elements and pack whole paragraphs into ~1,200-token windows with a small overlap. Every chunk stores its `item_id`, section head, and character offsets into the normalized text. That provenance is the point: a researcher can trace any sentence in an answer back to a section of a specific PDF, and an untraceable answer is worse than no answer.
+
+**One Postgres, one GROBID.** Embeddings live in `pgvector` in the same instance as the download queue, with an HNSW index and cosine distance. Standing up a second datastore for a corpus this size would be the wrong trade. The embed stage is rate-limited by the embedding API rather than CPU-bound, which makes it a queue problem — so it reuses the same `FOR UPDATE SKIP LOCKED` worker pattern as `pdf_downloads.py` instead of adding new infrastructure. Adding capacity is another replica, same as the downloader.
+
+**The graph reuses metadata that is already on disk.**
+
+| Node | Derived from |
+|---|---|
+| `paper` | `item_id`, the join key for the whole pipeline |
+| `author` | DSpace `dc.contributor.author`, normalized `Last, First` → `First Last` through a name map so authors merge across papers instead of splitting on string variants |
+| `topic` | `dc.subject` across plain and `.lcsh` subject terms |
+| `venue` | `dc.publisher`, `dc.relation.ispartofseries` |
+
+| Edge | Derived from |
+|---|---|
+| `authored_by` | DSpace author list |
+| `about` | `dc.subject` |
+| `cites` | GROBID `<biblStruct>` reference entries |
+| `cites_within_corpus` | citation edges resolving to another `item_id` in the collection |
+
+`cites_within_corpus` is the edge worth having. GROBID already writes the reference list into the TEI on disk, so citation structure costs no extra extraction pass. In a single-institution corpus, the subgraph of papers citing each other is a strong signal about which groups built on which — considerably more useful than treating each paper as an isolated blob.
+
+**Communities give the system its global view.** Louvain over the co-authorship, co-citation, and topic edges yields clusters that line up with labs and research areas. Each community is summarized once and cached. This is what answers *"what has Georgia Tech worked on in stochastic control?"* — a question about the distribution of papers rather than about any single passage, and precisely the case where pure vector search degrades.
+
+**Retrieval routes by intent.**
+
+- *Specific* — a method, a person, a named result → vector search over chunks, rerank, answer from the top passages.
+- *Thematic* — "what has been done on", "which papers" → community summaries plus aggregated topic and co-citation counts.
+- *Relational* — "what did this build on", "who works with whom" → traversal outward from a seed node, following `cites_within_corpus` and `authored_by`.
+
+Results merge, and every claim carries the `item_id`s it came from, which resolve to `handle_id` and `source_url` in the corpus. The answer is a set of citable papers, not a paragraph of unattributed prose.
+
+---
+
 ## Running it
 
 Requires a local GROBID server (`http://localhost:8070` by default, see `config.json`) and a Postgres instance.
@@ -91,17 +137,26 @@ Requires a local GROBID server (`http://localhost:8070` by default, see `config.
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
-export DATABASE_URL=postgres://...        # download queue
+export DATABASE_URL=postgres://...        # queue + pgvector
+export GROBID_URL=http://localhost:8070
+export EMBEDDING_MODEL=...                # embedding backend
+
 python get_all_papers.py                  # discover items
 python bitstream_lookup.py                # resolve PDF bitstreams
 python pdf_db.py                          # seed the queue
 python pdf_downloads.py                   # download (10 workers)
 python read_text.py                       # GROBID extraction
 python retry_failed.py                    # re-drive failures
-python build_corpus.py                    # build the corpus
+python build_corpus.py                    # join TEI + catalog → corpus
+
+python build_index.py                     # chunk + embed → pgvector
+python build_graph.py                     # entity + citation graph, communities
+python ask.py "how did GT approach LQR control?"   # query
 ```
 
-`read_text.py`, `retry_failed.py`, and `build_corpus.py` are tunable by environment variable rather than code edits — `THREADS`, `BATCH_SIZE`, `RETRY_ROUNDS`, `KEEP_FIGURES`, `HYPHENATE`, and the input/output paths.
+`read_text.py`, `retry_failed.py`, `build_corpus.py`, `build_index.py`, and `ask.py` are tunable by environment variable rather than code edits — thread and batch counts, retry rounds, the embedding model, and the input/output paths.
+
+`ask.py` prints the answer with the papers behind it, each resolving to its `handle_id` and SMARTECH URL.
 
 ---
 
@@ -118,17 +173,17 @@ downloaded_pdfs/        PDFs, named by item_id
 extracted_text/         GROBID TEI output, one file per item_id
 ```
 
-PDFs, TEI, and corpus output are gitignored. They are large (16.6 GB) and, more importantly, licensed by their authors — redistribution rights are the repository's, not this project's. Code is committed; data is not.
+Postgres holds the queue, the corpus, the vector index, and the graph. PDFs, TEI, and corpus output are gitignored. They are large (16.6 GB) and, more importantly, licensed by their authors — redistribution rights are the repository's, not this project's. Code is committed; data is not.
 
 ## Stack
 
-Python 3.12 · Postgres (`psycopg2`) · Kubernetes · DSpace REST API · GROBID (`grobid-client-python`) · `lxml` / `xml.etree` for TEI
+Python 3.12 · Postgres (`psycopg2`) + `pgvector` · Kubernetes · DSpace REST API · GROBID (`grobid-client-python`) · `lxml` / `xml.etree` for TEI · NetworkX for graph traversal and Louvain communities
 
-## Roadmap
+## Extending
 
-- Ingest the 1,854 PDFs that are downloaded but not yet extracted.
-- Resolve the 40 items with multiple PDF bitstreams into per-item subdirectories.
-- Chunker and embedd `text`, build the graph layer, stand up GraphRAG retrieval.
+- Extend extraction across the full bitstream set — the download stage already holds 2,519 PDFs and the extraction stage is tuned to run in bounded batches against the GROBID queue.
+- Resolve the 40 items carrying multiple PDF bitstreams into per-item subdirectories, so no bitstream is shadowed.
+- Grow the graph beyond Georgia Tech to make cross-institution citation edges resolvable.
 - Backfill `dc.rights` from license fields (`dc.rights.metadata`, `dc.rights.uri`).
 
 ---
