@@ -27,3 +27,7 @@ writes/corpus.*
 *.csv
 
 .DS_Store
+
+ragproject/logs/
+
+ragproject/cache/

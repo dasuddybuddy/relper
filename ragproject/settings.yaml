@@ -7,7 +7,7 @@
 completion_models:
   default_completion_model:
     model_provider: openai
-    model: y
+    model: gpt-4o-mini
     auth_method: api_key # or azure_managed_identity
     api_key: ${GRAPHRAG_API_KEY} # set this in the generated .env file, or remove if managed identity
     retry:
@@ -16,7 +16,7 @@ completion_models:
 embedding_models:
   default_embedding_model:
     model_provider: openai
-    model: y
+    model: text-embedding-3-small
     auth_method: api_key
     api_key: ${GRAPHRAG_API_KEY}
     retry:
@@ -25,7 +25,11 @@ embedding_models:
 ### Document processing settings ###
 
 input:
-  type: text # [csv, text, json, jsonl]
+  type: csv
+  base_dir: "input"
+  file_pattern: "corpus_sample\\.csv$$"
+  text_column: "text"
+  title_column: "title"
 
 chunking:
   type: tokens
@@ -68,7 +72,34 @@ embed_text:
 extract_graph:
   completion_model_id: default_completion_model
   prompt: "prompts/extract_graph.txt"
-  entity_types: [organization,person,geo,event]
+  entity_types: [
+    "Paper",
+    "Author",
+    "Institution",
+    "ResearchArea",
+    "Problem",
+    "Method",
+    "Model",
+    "Algorithm",
+    "Dataset",
+    "Benchmark",
+    "Metric",
+    "Technology",
+    "Hardware",
+    "ProgrammingLanguage",
+    "Task",
+    "Experiment",
+    "Result",
+    "Claim",
+    "Limitation",
+    "Application",
+    "SoftwareLibrary",
+    "Architecture",
+    "Hyperparameter",
+    "OptimizationTechnique",
+    "ResearchQuestion",
+    "Theory"
+]
   max_gleanings: 1
 
 summarize_descriptions:

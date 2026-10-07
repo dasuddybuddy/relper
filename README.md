@@ -117,6 +117,20 @@ The corpus is chunked, embedded, and linked into a typed entity graph, then quer
 
 `cites_within_corpus` is the edge worth having. GROBID already writes the reference list into the TEI on disk, so citation structure costs no extra extraction pass. In a single-institution corpus, the subgraph of papers citing each other is a strong signal about which groups built on which — considerably more useful than treating each paper as an isolated blob.
 
+**GraphRAG extraction entity types.** `ragproject/settings.yaml` drives the GraphRAG layer's `extract_graph` step with 26 entity types, scoped to how research papers talk about themselves rather than the generic ORG/PERSON/LOCATION defaults:
+
+| | | |
+|---|---|---|
+| `Paper` | `Author` | `Institution` |
+| `ResearchArea` | `ResearchQuestion` | `Theory` |
+| `Problem` | `Task` | `Application` |
+| `Method` | `Algorithm` | `OptimizationTechnique` |
+| `Model` | `Architecture` | `Hyperparameter` |
+| `Dataset` | `Benchmark` | `Metric` |
+| `Experiment` | `Result` | `Claim` |
+| `Limitation` | `Technology` | `Hardware` |
+| `ProgrammingLanguage` | `SoftwareLibrary` | |
+
 **Communities give the system its global view.** Louvain over the co-authorship, co-citation, and topic edges yields clusters that line up with labs and research areas. Each community is summarized once and cached. This is what answers *"what has Georgia Tech worked on in stochastic control?"* — a question about the distribution of papers rather than about any single passage, and precisely the case where pure vector search degrades.
 
 **Retrieval routes by intent.**
