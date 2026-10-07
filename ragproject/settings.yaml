@@ -99,7 +99,7 @@ extract_graph:
     "OptimizationTechnique",
     "ResearchQuestion",
     "Theory"
-]
+  ]
   max_gleanings: 1
 
 summarize_descriptions:
