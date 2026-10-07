@@ -10,22 +10,22 @@ A research-intelligence pipeline over the [Georgia Tech SMARTECH](https://reposi
 SMARTECH DSpace REST API
         │  3,166 items, 67 metadata fields
         ▼
-  get_all_papers.py ──── paginated discovery, concurrent page fetch
+  pipeline/dspace/get_all_papers.py ── paginated discovery, concurrent page fetch
         ▼
-  bitstream_lookup.py ── walk bundles → ORIGINAL → filter *.pdf
+  pipeline/dspace/bitstream_lookup.py ── walk bundles → ORIGINAL → filter *.pdf
         │  2,860 PDF bitstreams
         ▼
-  pdf_db.py ──────────── seed Postgres queue (item_id, handle, bitstream_id, url)
+  pipeline/ingest/pdf_db.py ── seed Postgres queue (item_id, handle, bitstream_id, url)
         ▼
-  pdf_downloads.py ───── 10 workers · claim queue · download
+  pipeline/ingest/pdf_downloads.py ── 10 workers · claim queue · download
         │  2,519 PDFs (16.6 GB)
         ▼
-  read_text.py ───────── GROBID `processFulltextDocument` → TEI XML
+  pipeline/ingest/read_text.py ── GROBID `processFulltextDocument` → TEI XML
         │  992 extractions (217 MB)
         ▼
-  retry_failed.py ────── re-drive GROBID failures until exhausted
+  pipeline/ingest/retry_failed.py ── re-drive GROBID failures until exhausted
         ▼
-  build_corpus.py ────── TEI + catalog join → corpus.jsonl / corpus.csv
+  pipeline/build/build_corpus.py ── TEI + catalog join → corpus.jsonl / corpus.csv
         │  992 records, full text + bibliographic fields
         ▼
   build_index.py ─────── structure-aware chunking → embeddings → pgvector
@@ -58,7 +58,7 @@ Each stage is independently re-runnable and idempotent: re-running picks up wher
 
 ## Corpus output
 
-`build_corpus.py` joins the 992 extractions against the catalog and emits `writes/corpus.jsonl` (one object per record) plus `writes/corpus.csv`.
+`pipeline/build/build_corpus.py` joins the 992 extractions against the catalog and emits `writes/corpus.jsonl` (one object per record) plus `writes/corpus.csv`.
 
 | Column | Source |
 |---|---|
@@ -155,20 +155,20 @@ export DATABASE_URL=postgres://...        # queue + pgvector
 export GROBID_URL=http://localhost:8070
 export EMBEDDING_MODEL=...                # embedding backend
 
-python get_all_papers.py                  # discover items
-python bitstream_lookup.py                # resolve PDF bitstreams
-python pdf_db.py                          # seed the queue
-python pdf_downloads.py                   # download (10 workers)
-python read_text.py                       # GROBID extraction
-python retry_failed.py                    # re-drive failures
-python build_corpus.py                    # join TEI + catalog → corpus
+python pipeline/dspace/get_all_papers.py   # discover items
+python pipeline/dspace/bitstream_lookup.py # resolve PDF bitstreams
+python pipeline/ingest/pdf_db.py           # seed the queue
+python pipeline/ingest/pdf_downloads.py    # download (10 workers)
+python pipeline/ingest/read_text.py        # GROBID extraction
+python pipeline/ingest/retry_failed.py     # re-drive failures
+python pipeline/build/build_corpus.py      # join TEI + catalog → corpus
 
 python build_index.py                     # chunk + embed → pgvector
 python build_graph.py                     # entity + citation graph, communities
 python ask.py "how did GT approach LQR control?"   # query
 ```
 
-`read_text.py`, `retry_failed.py`, `build_corpus.py`, `build_index.py`, and `ask.py` are tunable by environment variable rather than code edits — thread and batch counts, retry rounds, the embedding model, and the input/output paths.
+`pipeline/ingest/read_text.py`, `pipeline/ingest/retry_failed.py`, `pipeline/build/build_corpus.py`, `build_index.py`, and `ask.py` are tunable by environment variable rather than code edits — thread and batch counts, retry rounds, the embedding model, and the input/output paths.
 
 `ask.py` prints the answer with the papers behind it, each resolving to its `handle_id` and SMARTECH URL.
 
@@ -177,11 +177,16 @@ python ask.py "how did GT approach LQR control?"   # query
 ## Layout
 
 ```
-.                       pipeline stages, one concern per file
-models/paper_record.py  typed row wrapper for the download queue
+ragproject/             GraphRAG project (settings.yaml, .env, input/, output/, cache/, logs/)
+pipeline/dspace/        SMARTECH discovery: base, scan_page, get_all_papers, bitstream_lookup
+pipeline/ingest/        Postgres queue + downloads: pdf_db, pdf_downloads, read_text, retry_failed
+pipeline/build/         corpus assembly: build_corpus, filter, sample_corpus
+pipeline/models/        typed row wrappers (PaperRecord) shared by the queue workers
+pipeline/viz/           visualize_graph.py — 3D entity graph from ragproject/output
+pipeline/cli/           query_cli.py — interactive graphrag query CLI
 config.json             GROBID client + server config
-deployment.yaml         4-replica download Deployment
 Dockerfile              download worker image
+deployment.yaml         4-replica download Deployment
 writes/                 catalog JSON, bitstream map, corpus output
 downloaded_pdfs/        PDFs, named by item_id
 extracted_text/         GROBID TEI output, one file per item_id
