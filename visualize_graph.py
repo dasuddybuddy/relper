@@ -53,6 +53,9 @@ PAPER_HTML = """<!DOCTYPE html>
          background: #0f1115; color: #e6e6e6; overflow: hidden; }
   #graph { position: absolute; inset: 0 380px 0 0; background:
            radial-gradient(#161a22 1px, transparent 1px) 0 0 / 34px 34px, #0f1115; }
+  #ring { position: absolute; display: none; border: 2.5px solid #ffffff;
+          border-radius: 50%; pointer-events: none; z-index: 5;
+          box-shadow: 0 0 14px rgba(255,255,255,.65), inset 0 0 8px rgba(255,255,255,.35); }
   #sidebar { position: absolute; top: 0; right: 0; bottom: 0; width: 380px;
              background: #171a21; border-left: 1px solid #2a2f3a; overflow-y: auto; }
   #settings { padding: 14px 18px; border-bottom: 1px solid #262b36; }
@@ -87,7 +90,7 @@ PAPER_HTML = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<div id="graph"></div>
+<div id="graph"><div id="ring"></div></div>
 <div id="sidebar">
   <div id="settings">
     <h1>RELPER — paper graph</h1>
@@ -162,6 +165,77 @@ document.getElementById("legend").innerHTML = DATA.legend.map(x =>
 ).join("");
 
 let graph = null;
+let selectedId = null;
+const ring = document.getElementById("ring");
+
+function activeLink(l) {
+  return selectedId !== null && (l.from === selectedId || l.to === selectedId);
+}
+
+function applyHighlight() {
+  if (!graph) return;
+  graph.linkColor(l => activeLink(l) ? "rgba(255,236,170,1)" : "rgba(140,160,190,0.14)")
+    .linkWidth(l => activeLink(l) ? 2.5 + Math.sqrt(l.count) : 0.5 + Math.sqrt(l.count));
+  graph.graphData(graph.graphData());
+  if (selectedId === null) ring.style.display = "none";
+}
+
+function selectNode(n) {
+  selectedId = n.id;
+  applyHighlight();
+  showPaper(n);
+}
+
+function clearSelection() {
+  if (selectedId === null) return;
+  selectedId = null;
+  applyHighlight();
+}
+
+function project(x, y, z) {
+  const cam = graph.camera();
+  const v = cam.matrixWorldInverse.elements, p = cam.projectionMatrix.elements;
+  const vx = v[0] * x + v[4] * y + v[8] * z + v[12];
+  const vy = v[1] * x + v[5] * y + v[9] * z + v[13];
+  const vz = v[2] * x + v[6] * y + v[10] * z + v[14];
+  const vw = v[3] * x + v[7] * y + v[11] * z + v[15];
+  const cx = p[0] * vx + p[4] * vy + p[8] * vz + p[12] * vw;
+  const cy = p[1] * vx + p[5] * vy + p[9] * vz + p[13] * vw;
+  const cw = p[3] * vx + p[7] * vy + p[11] * vz + p[15] * vw;
+  const box = document.getElementById("graph");
+  return {
+    x: (cx / cw * 0.5 + 0.5) * box.clientWidth,
+    y: (-cy / cw * 0.5 + 0.5) * box.clientHeight,
+    ok: cw > 0,
+  };
+}
+
+function trackRing() {
+  if (graph && selectedId !== null) {
+    const n = graph.graphData().nodes.find(x => x.id === selectedId);
+    const o = n && n.__threeObj;
+    if (n && o && Number.isFinite(n.x)) {
+      const r = (o.geometry.parameters.radius || 1) * o.scale.x;
+      const m = graph.camera().matrixWorld.elements;
+      const s1 = project(n.x, n.y, n.z);
+      const s2 = project(n.x + r * m[0], n.y + r * m[1], n.z + r * m[2]);
+      const d = Math.hypot(s2.x - s1.x, s2.y - s1.y) * 2;
+      if (s1.ok && d > 2 && d < 4000) {
+        ring.style.display = "block";
+        ring.style.width = d + "px";
+        ring.style.height = d + "px";
+        ring.style.left = (s1.x - d / 2) + "px";
+        ring.style.top = (s1.y - d / 2) + "px";
+      } else {
+        ring.style.display = "none";
+      }
+    }
+  }
+}
+function ringLoop() { trackRing(); requestAnimationFrame(ringLoop); }
+requestAnimationFrame(ringLoop);
+setInterval(trackRing, 50);
+
 
 function applySettings() {
   if (!graph) return;
@@ -190,14 +264,15 @@ try {
         padding:8px 10px;border:1px solid #333b4a;border-radius:6px;max-width:340px">
         <b>${esc(n.title)}</b><br><span style="color:#8b97a8">${esc(n.authors.join(", "))}</span>
         <br><span style="color:#ffd479">${n.links} connection${n.links === 1 ? "" : "s"}</span></div>`)
-    .linkWidth(l => 0.5 + Math.sqrt(l.count))
-    .linkColor(() => "rgba(140,160,190,0.35)")
+    .linkWidth(l => activeLink(l) ? 2.5 + Math.sqrt(l.count) : 0.5 + Math.sqrt(l.count))
+    .linkColor(l => activeLink(l) ? "rgba(255,236,170,1)" : "rgba(140,160,190,0.14)")
+    .linkOpacity(1)
     .linkLabel(l => `<div style="font:12px/1.4 sans-serif;background:#171a21;color:#e6e6e6;
         padding:6px 9px;border:1px solid #333b4a;border-radius:6px;max-width:300px">
         <b>${l.count} shared concept${l.count === 1 ? "" : "s"}</b><br>${esc(l.label)}</div>`)
-    .onNodeClick(n => showPaper(n))
+    .onNodeClick(n => selectNode(n))
     .onLinkClick(l => showEdge(l))
-    .onBackgroundClick(() => resetPanel())
+    .onBackgroundClick(() => { clearSelection(); resetPanel(); })
     .graphData({ nodes: DATA.nodes, links: DATA.edges });
   graph.width(window.innerWidth - 380).height(window.innerHeight);
 } catch (err) {
