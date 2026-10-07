@@ -8,10 +8,10 @@ extracted_text/
 venv/
 __pycache__/
 *.pyc
-.env
 
 # Environment variables
 .env
+.env.*
 
 # Test
 test.py
@@ -19,15 +19,22 @@ test.py
 # XML
 *.xml
 
-# txt
+# txt — logs/temp only; project prompts are tracked
 *.txt
+!ragproject/prompts/*.txt
 
-# csv
+# csv — corpus and crawl data
 writes/corpus.*
 *.csv
 
 .DS_Store
 
+# GraphRAG run artifacts
 ragproject/logs/
-
 ragproject/cache/
+ragproject/output/
+*.log
+nohup.out
+
+# Crawl state / licensed downloads
+writes/missedPDFS/
