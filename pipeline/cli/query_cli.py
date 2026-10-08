@@ -7,11 +7,13 @@ One-shot:
 
 Interactive (no arguments): opens a REPL — type
     kw=basic <prompt>      or   basic <prompt>
-and press enter; exit/quit/Ctrl-D to leave.
+or just a bare prompt (defaults to basic); visualize opens the graph;
+exit/quit/Ctrl-D to leave.
 """
 
 import argparse
 import sys
+import webbrowser
 from pathlib import Path
 
 from graphrag.cli.query import (
@@ -25,13 +27,14 @@ METHODS = ("basic", "local", "global", "drift")
 
 BANNER = f"""\
 RELPER — graphrag query CLI
-  kw=<{'|'.join(METHODS)}> <prompt>      (kw= prefix optional)
+  kw=<{'|'.join(METHODS)}> <prompt>      (kw= prefix optional, defaults to basic)
+  visualize                  open the 3D entity graph in your browser
   exit / Ctrl-D to quit"""
 
 USAGE = (
     "query_cli.py [--root DIR] [--data DIR] [--no-stream] "
     "kw=<basic|local|global|drift> <prompt>\n"
-    "       query_cli.py [...] <basic|local|global|drift> <prompt>"
+    "       query_cli.py [...] [<basic|local|global|drift>] <prompt>   (default: basic)"
 )
 
 
@@ -66,9 +69,8 @@ def split_method(words: list[str]) -> tuple[str, str]:
         method = first.lower().rstrip(":")
         prompt_words = words[1:]
     else:
-        print(f"error: first word must be one of {', '.join(METHODS)} (or kw=<method>)", file=sys.stderr)
-        print(USAGE, file=sys.stderr)
-        raise SystemExit(2)
+        method = "basic"
+        prompt_words = words
 
     if method not in METHODS:
         print(f"error: unknown search method '{method}'", file=sys.stderr)
@@ -108,6 +110,17 @@ def run_search(args: argparse.Namespace, method: str, prompt: str) -> None:
         run_drift_search(community_level=args.community_level, **common)
 
 
+def open_viz(args: argparse.Namespace) -> int:
+    html = Path(args.data if args.data else Path(args.root) / "output") / "graph_visualizer.html"
+    if not html.is_file():
+        print(f"error: no visualization at {html}", file=sys.stderr)
+        print("build one first: python pipeline/viz/visualize_graph.py", file=sys.stderr)
+        return 1
+    webbrowser.open(html.resolve().as_uri())
+    print(f"[visualize] opening {html}")
+    return 0
+
+
 def interactive(args: argparse.Namespace) -> int:
     print(BANNER)
     while True:
@@ -121,6 +134,9 @@ def interactive(args: argparse.Namespace) -> int:
             continue
         if line.lower() in ("exit", "quit", "q"):
             return 0
+        if line.lower() == "visualize":
+            open_viz(args)
+            continue
         try:
             method, prompt = split_method(line.split())
         except SystemExit:
@@ -134,6 +150,8 @@ def interactive(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv if argv is not None else sys.argv[1:])
     if args.words:
+        if len(args.words) == 1 and args.words[0].lower() == "visualize":
+            return open_viz(args)
         method, prompt = split_method(args.words)
         run_search(args, method, prompt)
     else:

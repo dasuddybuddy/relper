@@ -2,6 +2,8 @@
 
 A research-intelligence pipeline over the [Georgia Tech SMARTECH](https://repository.gatech.edu/) repository. RELPER harvests every open-access paper in the College of Computing, turns each PDF into structured full text with [GROBID](https://github.com/kermitt2/grobid), and reconciles the extraction against the repository's own catalog records to produce a clean, queryable corpus. A GraphRAG retrieval layer then reasons across that corpus rather than over single documents, so a query returns the papers *and* the relationships between them.
 
+That retrieval layer is driven from an interactive terminal — [`pipeline/cli/query_cli.py`](pipeline/cli/query_cli.py). A bare question runs a basic search, a leading `basic`/`local`/`global`/`drift` (or `kw=<method>`) selects the retrieval strategy, and `visualize` opens a 3D map of the entity graph the index was built from.
+
 ---
 
 ## Pipeline
@@ -21,12 +23,12 @@ SMARTECH DSpace REST API
         │  2,519 PDFs (16.6 GB)
         ▼
   pipeline/ingest/read_text.py ── GROBID `processFulltextDocument` → TEI XML
-        │  992 extractions (217 MB)
+        │  1,000+ extractions (217 MB)
         ▼
   pipeline/ingest/retry_failed.py ── re-drive GROBID failures until exhausted
         ▼
   pipeline/build/build_corpus.py ── TEI + catalog join → corpus.jsonl / corpus.csv
-        │  992 records, full text + bibliographic fields
+        │  1,000+ records, full text + bibliographic fields
         ▼
   build_index.py ─────── structure-aware chunking → embeddings → pgvector
         ▼
@@ -58,7 +60,7 @@ Each stage is independently re-runnable and idempotent: re-running picks up wher
 
 ## Corpus output
 
-`pipeline/build/build_corpus.py` joins the 992 extractions against the catalog and emits `writes/corpus.jsonl` (one object per record) plus `writes/corpus.csv`.
+`pipeline/build/build_corpus.py` joins the 1,000+ extractions against the catalog and emits `writes/corpus.jsonl` (one object per record) plus `writes/corpus.csv`.
 
 | Column | Source |
 |---|---|
@@ -74,15 +76,15 @@ Each stage is independently re-runnable and idempotent: re-running picks up wher
 | `item_id`, `bitstream_id`, `content_url` | join keys / provenance |
 | `abstract_source` | which side supplied `abstract` |
 
-Current field coverage across the 992 extracted records:
+Current field coverage across the 1,000+ extracted records:
 
 | | records |
 |---|---|
-| title, date, source_url | 992 |
-| authors | 991 |
-| subject | 966 |
-| abstract | 956 (906 DSpace, 50 GROBID) |
-| usable body text (>200 chars) | 989 |
+| title, date, source_url | 1,000+ |
+| authors | ~1,000 |
+| subject | ~970 |
+| abstract | ~960 (910 DSpace, 50 GROBID) |
+| usable body text (>200 chars) | ~990 |
 | rights | 3 |
 
 Rights is genuinely sparse: only 280 of 3,166 catalog records carry a `dc.rights` value at all, and the pipeline does not synthesize one. It stays empty rather than guessed.
@@ -143,7 +145,7 @@ Results merge, and every claim carries the `item_id`s it came from, which resolv
 
 ---
 
-## Running it
+## Running the pipeline
 
 Requires a local GROBID server (`http://localhost:8070` by default, see `config.json`) and a Postgres instance.
 
@@ -165,12 +167,36 @@ python pipeline/build/build_corpus.py      # join TEI + catalog → corpus
 
 python build_index.py                     # chunk + embed → pgvector
 python build_graph.py                     # entity + citation graph, communities
-python ask.py "how did GT approach LQR control?"   # query
 ```
 
 `pipeline/ingest/read_text.py`, `pipeline/ingest/retry_failed.py`, `pipeline/build/build_corpus.py`, `build_index.py`, and `ask.py` are tunable by environment variable rather than code edits — thread and batch counts, retry rounds, the embedding model, and the input/output paths.
 
-`ask.py` prints the answer with the papers behind it, each resolving to its `handle_id` and SMARTECH URL.
+---
+
+## Running the CLI
+
+The query front-end reads the built index under `ragproject/output/` (override `--root` / `--data`), loading the API key from `ragproject/.env` automatically.
+
+```bash
+# interactive: opens its own prompt
+python pipeline/cli/query_cli.py
+#   kw= What are the dominant themes in stochastic optimal control?   (bare prompt → basic)
+#   local Which papers address model predictive control?
+#   global What has Georgia Tech worked on?
+#   drift Follow the papers that cite each other most
+#   visualize                                        (opens the 3D entity graph)
+#   exit
+
+# or one-shot, same syntax
+python pipeline/cli/query_cli.py "What is the relationship between SOC and MPC?"
+python pipeline/cli/query_cli.py global "What themes dominate the corpus?"
+```
+
+The first token sets the search method — `basic` (default), `local` (entity/relationship + vector), `global` (community summaries), or `drift` — either as a bare word or `kw=<method>`. Anything that isn't a method is treated as a prompt and runs a basic search; an unknown `kw=` name is rejected. In the REPL, `visualize` opens `ragproject/output/graph_visualizer.html` in the browser — run `python pipeline/viz/visualize_graph.py` first to generate it. `pipeline/cli/query_terminal.sh` opens a fresh Terminal window already sitting in the CLI.
+
+Useful flags: `--no-stream` (print the answer instead of streaming tokens), `--community-level`, `--response-type`, and `--verbose`. Every answer ends with `[Data: Sources (...)]` citations resolving to the `item_id`s it came from.
+
+---
 
 ---
 
