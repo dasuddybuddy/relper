@@ -40,13 +40,8 @@ https://github.com/user-attachments/assets/430ba763-fe6f-4929-804e-0ed9121495e4
 
 ### Visualizer
 
-#### Graph
+[![Visualizer Demo](https://img.youtube.com/vi/NaPiMC8QaXQ/0.jpg)](https://youtu.be/NaPiMC8QaXQ)
 
-#### Isolation
-
-#### Search
-
-#### Paper Details
 
 ## Pipeline
 
