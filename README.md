@@ -6,6 +6,14 @@ That retrieval layer is driven from an interactive terminal — [`pipeline/cli/q
 
 ---
 
+## Demo
+
+### Queries
+
+
+### Visualizer
+
+
 ## Pipeline
 
 ```

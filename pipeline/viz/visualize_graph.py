@@ -335,6 +335,7 @@ function applySettings() {
   document.getElementById("v_rep").textContent = rep;
   graph.d3Force("link").distance(len).strength(str);
   graph.d3Force("charge").strength(rep);
+  graph.d3ReheatSimulation();
   graph.resumeAnimation();
 }
 ["s_len", "s_str", "s_rep"].forEach(id =>
@@ -366,6 +367,10 @@ try {
     .onBackgroundClick(() => { clearSelection(); resetPanel(); })
     .graphData({ nodes: DATA.nodes, links: DATA.edges });
   graph.width(window.innerWidth - 380).height(window.innerHeight);
+  const ctrl = graph.controls();
+  ctrl.zoomSpeed = 3;
+  ctrl.enableDamping = false;
+  ctrl.maxDistance = Infinity;
 } catch (err) {
   panel.innerHTML = `<div class="hint">3D view unavailable — WebGL could not start
     in this browser.<br>${esc(err)}</div>`;
@@ -428,8 +433,20 @@ function setActive(i) {
 
 function focusNode(n) {
   if (!graph || !Number.isFinite(n.x)) return;
-  const ratio = 1 + 180 / Math.max(1, Math.hypot(n.x, n.y, n.z));
-  graph.cameraPosition({ x: n.x * ratio, y: n.y * ratio, z: n.z * ratio }, n, 1200);
+  let radius = 300;
+  const bb = graph.getGraphBbox();
+  if (bb) {
+    radius = Math.max(
+      Math.abs(bb.x[0]), Math.abs(bb.x[1]),
+      Math.abs(bb.y[0]), Math.abs(bb.y[1]),
+      Math.abs(bb.z[0]), Math.abs(bb.z[1]), 1);
+  }
+  const dist = Math.max(radius * 1.3, 200);
+  const norm = Math.hypot(n.x, n.y, n.z) || 1;
+  const ratio = dist / norm;
+  graph.cameraPosition(
+    { x: n.x * ratio, y: n.y * ratio, z: n.z * ratio },
+    n, 1200);
 }
 
 function pickSuggestion(i) {
