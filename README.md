@@ -8,32 +8,40 @@ That retrieval layer is driven from an interactive terminal — [`pipeline/cli/q
 
 ## Demo
 
-### Basic Query
+### Queries
+
+#### Basic
 
 
 https://github.com/user-attachments/assets/22cdb63b-b9b4-4ce5-972b-93fea4eafb8e
 
 
-### Local Query
+#### Local
 
 
 https://github.com/user-attachments/assets/b8969d67-0aa2-4f1d-8542-f26b5ce2605f
 
 
 
-### Global Query
+#### Global
 
 
 
 https://github.com/user-attachments/assets/430ba763-fe6f-4929-804e-0ed9121495e4
 
 
+#### Drift
+
 
 ### Visualizer
 
+#### Graph
 
+#### Isolation
 
+#### Search
 
+#### Paper Details
 
 ## Pipeline
 
