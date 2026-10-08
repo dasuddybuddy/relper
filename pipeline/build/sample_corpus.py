@@ -9,7 +9,7 @@ except OverflowError:
 
 CSV_IN = os.environ.get("CSV_IN", "ragproject/input/gt_cs_papers.csv")
 CSV_OUT = os.environ.get("CSV_OUT", "ragproject/input/corpus_sample.csv")
-ROWS = int(os.environ.get("ROWS", "20"))
+ROWS = int(os.environ.get("ROWS", "100"))
 
 
 def main():

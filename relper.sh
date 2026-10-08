@@ -1,6 +1,6 @@
 #!/bin/sh
 # Opens a fresh Terminal window running the interactive query CLI.
-ROOT="$(cd "$(dirname "$0")"/../.. && pwd)"
+ROOT="$(cd "$(dirname "$0")" && pwd)"
 osascript <<EOF
 tell application "Terminal"
     activate

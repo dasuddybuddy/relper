@@ -84,6 +84,26 @@ PAPER_HTML = """<!DOCTYPE html>
   .slider label { display: flex; justify-content: space-between; font-size: 12px; color: #a9b4c2; }
   .slider label b { color: #ffd479; font-weight: 600; }
   .slider input { width: 100%; margin-top: 3px; accent-color: #f4a261; }
+  #search { width: 100%; margin-top: 8px; padding: 7px 10px; background: #10131a;
+            border: 1px solid #333b4a; border-radius: 6px; color: #e6e6e6; font-size: 13px; }
+  #search:focus { outline: none; border-color: #f4a261; }
+  #search::placeholder { color: #6b7686; }
+  .status { margin-top: 6px; font-size: 12px; color: #8b97a8; }
+  .btn { display: block; width: 100%; margin-top: 8px; padding: 7px 10px; background: #232a36;
+         border: 1px solid #333b4a; border-radius: 6px; color: #e6e6e6; cursor: pointer;
+         font: 600 13px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .btn:hover { background: #2c3546; border-color: #f4a261; color: #ffd479; }
+  .results { margin-top: 6px; }
+  .res { display: block; width: 100%; text-align: left; padding: 7px 10px; margin-top: 4px;
+         background: #10131a; border: 1px solid #333b4a; border-radius: 6px;
+         color: #e6e6e6; cursor: pointer;
+         font: 13px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .res:first-child { margin-top: 0; }
+  .res:hover, .res.active { background: #1b2130; border-color: #f4a261; }
+  .res .rt { display: block; font-weight: 600; }
+  .res .ra { display: block; color: #8b97a8; font-size: 11.5px; margin-top: 2px; }
+  .res mark { background: transparent; color: #ffd479; }
+  .res_more { padding: 6px 2px 0; font-size: 12px; color: #6b7686; }
   .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 8px; }
   .lg { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #b9c2cf; }
   .sw { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
@@ -94,6 +114,11 @@ PAPER_HTML = """<!DOCTYPE html>
 <div id="sidebar">
   <div id="settings">
     <h1>RELPER — paper graph</h1>
+    <input id="search" type="search" placeholder="Search papers by title or author…"
+           autocomplete="off" spellcheck="false">
+    <div class="results" id="results"></div>
+    <div class="status" id="search_status"></div>
+    <button class="btn" id="clear_view" style="display:none">Show all papers</button>
     <div class="slider"><label>Edge length / link distance <b id="v_len">140</b></label>
       <input type="range" id="s_len" min="40" max="500" step="10" value="140"></div>
     <div class="slider"><label>Link strength <b id="v_str">0.20</b></label>
@@ -105,7 +130,9 @@ PAPER_HTML = """<!DOCTYPE html>
   </div>
   <div id="panel">
     <div class="hint">Sphere size = number of connections.<br>
-    Click a paper for its summary, authors, and top concepts.<br>
+    Search above for a paper — pick a suggestion to jump to its node.<br>
+    Click a paper for its summary, authors, and top concepts —
+    use <b>Isolate</b> to show only that paper and its connections.<br>
     Click a connection to see what the papers share and why.</div>
   </div>
 </div>
@@ -130,9 +157,12 @@ function showPaper(n) {
   const link = n.url
     ? `<div class="meta"><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.handle || "source")}</a> · ${esc(n.date || "")}</div>`
     : "";
+  const isoBtn = `<button class="btn" id="iso_btn">${
+    isolateId === n.id ? "Show all papers" : "Isolate this paper & its connections"}</button>`;
   panel.innerHTML = `
     <h1>Paper <span class="sw" style="background:${n.color};vertical-align:middle"></span> ${esc(n.dominant)}</h1>
     <h2>${esc(n.title)}</h2>
+    ${isoBtn}
     <div class="meta"><b>Authors:</b></div><div class="chips">${authors}</div>
     ${link}
     ${n.subjects.length ? `<div class="sect">Subjects</div><div class="chips">${subjects}</div>` : ""}
@@ -142,6 +172,11 @@ function showPaper(n) {
     <div class="chips">${concepts}</div>
     <div class="sect">Connections</div>
     <div class="meta">${n.links} paper${n.links === 1 ? "" : "s"} in the corpus share concepts with this one.</div>`;
+  document.getElementById("iso_btn").addEventListener("click", () => {
+    isolateId = isolateId === n.id ? null : n.id;
+    applyView();
+    showPaper(n);
+  });
 }
 
 function showEdge(e) {
@@ -158,6 +193,59 @@ function showEdge(e) {
     <div class="sect">Connected by — shared concepts</div>
     ${items}
     ${e.concepts.length < e.count ? `<div class="meta">+ ${e.count - e.concepts.length} more</div>` : ""}`;
+}
+
+let isolateId = null;
+let searchQ = "";
+
+function matchesQuery(n, q) {
+  return n.title.toLowerCase().includes(q)
+    || n.authors.some(a => a.toLowerCase().includes(q));
+}
+
+function viewData() {
+  let nodes;
+  if (isolateId !== null) {
+    const keep = new Set([isolateId]);
+    for (const l of DATA.edges)
+      if (l.from === isolateId) keep.add(l.to);
+      else if (l.to === isolateId) keep.add(l.from);
+    nodes = DATA.nodes.filter(n => keep.has(n.id));
+  } else {
+    const q = searchQ.trim().toLowerCase();
+    nodes = q ? DATA.nodes.filter(n => matchesQuery(n, q)) : DATA.nodes;
+  }
+  const vis = new Set(nodes.map(n => n.id));
+  return { nodes, links: DATA.edges.filter(l => vis.has(l.from) && vis.has(l.to)) };
+}
+
+function updateStatus(shown) {
+  const status = document.getElementById("search_status");
+  const clear = document.getElementById("clear_view");
+  if (isolateId !== null) {
+    status.textContent = `Isolated — showing ${shown} paper${shown === 1 ? "" : "s"}`;
+    clear.style.display = "block";
+  } else if (searchQ.trim()) {
+    status.textContent = shown
+      ? `${shown} match${shown === 1 ? "" : "es"}`
+      : "no matching papers";
+    clear.style.display = "block";
+  } else {
+    status.textContent = `${shown} papers`;
+    clear.style.display = "none";
+  }
+}
+
+function applyView() {
+  if (!graph) return;
+  const v = viewData();
+  const vis = new Set(v.nodes.map(n => n.id));
+  if (selectedId !== null && !vis.has(selectedId)) {
+    selectedId = null;
+    ring.style.display = "none";
+  }
+  graph.graphData({ nodes: v.nodes, links: v.links });
+  updateStatus(v.nodes.length);
 }
 
 document.getElementById("legend").innerHTML = DATA.legend.map(x =>
@@ -257,6 +345,9 @@ try {
     (document.getElementById("graph"))
     .backgroundColor("#0f1115")
     .showNavInfo(false)
+    .d3VelocityDecay(0.95)
+    .d3AlphaDecay(0.06)
+    .d3AlphaMin(0.001)
     .nodeId("id")
     .nodeVal(n => 1 + n.links * 2.5)
     .nodeColor(n => n.color)
@@ -283,6 +374,128 @@ try {
 window.addEventListener("resize", () => {
   if (graph) graph.width(window.innerWidth - 380).height(window.innerHeight);
 });
+
+const searchInput = document.getElementById("search");
+const resultsBox = document.getElementById("results");
+let suggestions = [];
+let activeIdx = -1;
+
+function hl(text, q) {
+  const i = (text || "").toLowerCase().indexOf(q);
+  if (i < 0) return esc(text);
+  return esc(text.slice(0, i)) + "<mark>" + esc(text.slice(i, i + q.length))
+    + "</mark>" + esc(text.slice(i + q.length));
+}
+
+function matchScore(n, q) {
+  const t = n.title.toLowerCase();
+  if (t.startsWith(q)) return 0;
+  if (t.includes(q)) return 1;
+  if (n.authors.some(a => a.toLowerCase().startsWith(q))) return 2;
+  return 3;
+}
+
+function renderResults() {
+  const q = searchQ.trim().toLowerCase();
+  if (!q) {
+    resultsBox.innerHTML = "";
+    suggestions = [];
+    activeIdx = -1;
+    return;
+  }
+  const hits = DATA.nodes.filter(n => matchesQuery(n, q))
+    .sort((a, b) => matchScore(a, q) - matchScore(b, q));
+  suggestions = hits.slice(0, 8);
+  activeIdx = suggestions.length ? 0 : -1;
+  const more = hits.length - suggestions.length;
+  resultsBox.innerHTML = suggestions.length
+    ? suggestions.map((n, i) => `
+      <button class="res${i === activeIdx ? " active" : ""}" data-i="${i}">
+        <span class="rt">${hl(n.title, q)}</span>
+        <span class="ra">${esc(n.authors.join(", "))}</span>
+      </button>`).join("")
+      + (more > 0 ? `<div class="res_more">+${more} more — keep typing</div>` : "")
+    : `<div class="res_more">no matching papers</div>`;
+}
+
+function setActive(i) {
+  activeIdx = i;
+  [...resultsBox.querySelectorAll(".res")].forEach((el, k) =>
+    el.classList.toggle("active", k === i));
+  const el = resultsBox.querySelector(".res.active");
+  if (el) el.scrollIntoView({ block: "nearest" });
+}
+
+function focusNode(n) {
+  if (!graph || !Number.isFinite(n.x)) return;
+  const ratio = 1 + 180 / Math.max(1, Math.hypot(n.x, n.y, n.z));
+  graph.cameraPosition({ x: n.x * ratio, y: n.y * ratio, z: n.z * ratio }, n, 1200);
+}
+
+function pickSuggestion(i) {
+  const n = suggestions[i];
+  if (!n) return;
+  searchInput.value = "";
+  searchQ = "";
+  isolateId = null;
+  resultsBox.innerHTML = "";
+  suggestions = [];
+  activeIdx = -1;
+  applyView();
+  selectNode(n);
+  focusNode(n);
+}
+
+searchInput.addEventListener("input", () => {
+  searchQ = searchInput.value;
+  isolateId = null;
+  applyView();
+  renderResults();
+  if (selectedId !== null) {
+    const n = byId[selectedId];
+    if (n) showPaper(n);
+  }
+});
+searchInput.addEventListener("keydown", e => {
+  if (e.key === "ArrowDown" && suggestions.length) {
+    e.preventDefault();
+    setActive((activeIdx + 1) % suggestions.length);
+  } else if (e.key === "ArrowUp" && suggestions.length) {
+    e.preventDefault();
+    setActive((activeIdx - 1 + suggestions.length) % suggestions.length);
+  } else if (e.key === "Enter" && suggestions.length) {
+    e.preventDefault();
+    pickSuggestion(activeIdx < 0 ? 0 : activeIdx);
+  } else if (e.key === "Escape") {
+    searchInput.value = "";
+    searchQ = "";
+    applyView();
+    renderResults();
+  }
+});
+resultsBox.addEventListener("mousedown", e => {
+  const b = e.target.closest(".res");
+  if (b) {
+    e.preventDefault();
+    pickSuggestion(+b.dataset.i);
+  }
+});
+searchInput.addEventListener("blur", () => {
+  setTimeout(() => {
+    resultsBox.innerHTML = "";
+    suggestions = [];
+    activeIdx = -1;
+  }, 150);
+});
+document.getElementById("clear_view").addEventListener("click", () => {
+  isolateId = null;
+  searchQ = "";
+  searchInput.value = "";
+  resultsBox.innerHTML = "";
+  suggestions = [];
+  applyView();
+});
+updateStatus(DATA.nodes.length);
 </script>
 </body>
 </html>

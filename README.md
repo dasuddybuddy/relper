@@ -192,7 +192,14 @@ python pipeline/cli/query_cli.py "What is the relationship between SOC and MPC?"
 python pipeline/cli/query_cli.py global "What themes dominate the corpus?"
 ```
 
-The first token sets the search method — `basic` (default), `local` (entity/relationship + vector), `global` (community summaries), or `drift` — either as a bare word or `kw=<method>`. Anything that isn't a method is treated as a prompt and runs a basic search; an unknown `kw=` name is rejected. In the REPL, `visualize` opens `ragproject/output/graph_visualizer.html` in the browser — run `python pipeline/viz/visualize_graph.py` first to generate it. `pipeline/cli/query_terminal.sh` opens a fresh Terminal window already sitting in the CLI.
+To open the CLI in its own Terminal window, `cd` into the project root and run:
+
+```bash
+cd path/to/relper
+./relper.sh
+```
+
+The first token sets the search method — `basic` (default), `local` (entity/relationship + vector), `global` (community summaries), or `drift` — either as a bare word or `kw=<method>`. Anything that isn't a method is treated as a prompt and runs a basic search; an unknown `kw=` name is rejected. In the REPL, `visualize` opens `ragproject/output/graph_visualizer.html` in the browser — run `python pipeline/viz/visualize_graph.py` first to generate it. The sidebar search shows a dropdown of matching papers as you type (title or author, arrow keys + Enter work); picking one flies the camera to that node and highlights its edges. Each paper panel also has an **Isolate** button that shows only that paper and its connections. `./relper.sh` opens a fresh Terminal window already sitting in the CLI.
 
 Useful flags: `--no-stream` (print the answer instead of streaming tokens), `--community-level`, `--response-type`, and `--verbose`. Every answer ends with `[Data: Sources (...)]` citations resolving to the `item_id`s it came from.
 
