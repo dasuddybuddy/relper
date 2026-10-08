@@ -8,7 +8,11 @@ That retrieval layer is driven from an interactive terminal — [`pipeline/cli/q
 
 ## Demo
 
-### Queries
+### Basic Query
+
+### Local Query
+
+### Global Query
 
 
 ### Visualizer
