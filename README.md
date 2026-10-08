@@ -4,6 +4,11 @@ A research-intelligence pipeline over the [Georgia Tech SMARTECH](https://reposi
 
 That retrieval layer is driven from an interactive terminal — [`pipeline/cli/query_cli.py`](pipeline/cli/query_cli.py). A bare question runs a basic search, a leading `basic`/`local`/`global`/`drift` (or `kw=<method>`) selects the retrieval strategy, and `visualize` opens a 3D map of the entity graph the index was built from.
 
+<img width="1092" height="724" alt="Screenshot 2026-10-08 at 6 29 05 PM" src="https://github.com/user-attachments/assets/b50024a7-46d4-4fc5-9796-df0bf811d19a" />
+
+(Graph nodes and connections of 100 papers)
+
+
 ---
 
 ## Demo
